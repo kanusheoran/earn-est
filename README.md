@@ -140,9 +140,6 @@ Contributions and suggestions are welcome.
 
 earnest. is an educational project prototype and is not intended for processing real payments, storing sensitive student records, or enforcing official academic policies.
 
-## License
-
-No license has been specified yet. Add a `LICENSE` file before allowing others to reuse or redistribute the project.
 
 ---
 
