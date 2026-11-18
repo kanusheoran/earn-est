@@ -44,7 +44,7 @@ import { EnterpriseProfilePage } from './pages/enterprise/EnterpriseProfilePage'
 export function App() {
   return (
     <AppProvider>
-      <BrowserRouter>
+      <BrowserRouter basename={import.meta.env.BASE_URL}>
         <Routes>
           {/* Public Routes */}
           <Route path="/" element={<LandingPage />} />
