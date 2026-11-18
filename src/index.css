@@ -1,0 +1,143 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    background-color: #FAF6EE;
+    color: #242025;
+  }
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #FAF6EE;
+}
+::-webkit-scrollbar-thumb {
+  background: #DCCBD9;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #BA9CBA;
+}
+
+/* Card utilities */
+.card-subtle {
+  background-color: #FFFFFF;
+  border: 1px solid rgba(36, 87, 71, 0.06);
+  box-shadow: 0 2px 8px 0 rgba(36, 87, 71, 0.04), 0 1px 3px 0 rgba(41, 37, 42, 0.02);
+}
+
+.card-hover {
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.card-hover:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 32px -6px rgba(36, 87, 71, 0.1), 0 4px 12px -2px rgba(41, 37, 42, 0.05);
+}
+
+/* Organic blob shapes */
+.blob-shape {
+  border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+}
+
+.blob-shape-alt {
+  border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+}
+
+/* Pill button base */
+.pill-btn {
+  @apply inline-flex items-center gap-2 px-6 py-3 rounded-full font-semibold text-sm transition-all;
+}
+
+.pill-btn-primary {
+  @apply pill-btn bg-forest-500 text-white hover:bg-forest-600 shadow-soft;
+}
+
+.pill-btn-secondary {
+  @apply pill-btn bg-white border border-forest-200 text-forest-700 hover:bg-sage-50;
+}
+
+.pill-btn-accent {
+  @apply pill-btn bg-citron-400 text-forest-900 font-bold hover:bg-citron-300;
+}
+
+/* Marquee animation for horizontal ticker */
+@keyframes marquee {
+  0% { transform: translateX(0%); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-marquee {
+  animation: marquee 35s linear infinite;
+}
+
+.animate-marquee:hover {
+  animation-play-state: paused;
+}
+
+/* Organic decorative leaf shape */
+.leaf-shape {
+  clip-path: ellipse(50% 50% at 50% 50%);
+  transform: rotate(-15deg);
+}
+
+/* Section transitions */
+.section-rounded-top {
+  border-radius: 32px 32px 0 0;
+}
+
+.section-rounded {
+  border-radius: 32px;
+}
+
+/* Handwriting accent underline */
+.accent-underline {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 8'%3E%3Cpath d='M0 6 Q 25 0 50 4 T 100 3' stroke='%23245747' stroke-width='2' fill='none' opacity='0.3'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: bottom;
+  background-size: 100% 8px;
+  padding-bottom: 6px;
+}
+
+/* Counter animation placeholder */
+.stat-counter {
+  @apply text-4xl sm:text-5xl font-serif font-bold text-forest-500 leading-none;
+}
+
+/* Organic card style for dark backgrounds */
+.dark-card {
+  @apply rounded-3xl bg-white/[0.08] backdrop-blur-sm border border-white/10;
+}
+
+/* Progress bar organic style */
+.progress-organic {
+  @apply h-2.5 rounded-full overflow-hidden;
+  background: linear-gradient(90deg, #DCE8DA 0%, #EFE5D3 100%);
+}
+
+.progress-organic-fill {
+  @apply h-full rounded-full transition-all duration-500;
+  background: linear-gradient(90deg, #245747, #4B7C6E);
+}
+
+/* Feature icon circle */
+.icon-circle {
+  @apply w-12 h-12 rounded-full flex items-center justify-center shrink-0;
+}
+
+.icon-circle-sage {
+  @apply icon-circle bg-sage-200 text-forest-600;
+}
+
+.icon-circle-peach {
+  @apply icon-circle bg-peach-100 text-terracotta-500;
+}
+
+.icon-circle-lavender {
+  @apply icon-circle bg-lavender-100 text-plum-600;
+}
