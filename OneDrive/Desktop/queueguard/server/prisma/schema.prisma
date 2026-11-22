@@ -1,0 +1,129 @@
+// prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  name         String
+  passwordHash String
+  role         String   @default("STAFF") // "CUSTOMER", "STAFF", "ADMIN"
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  assignedCounters StaffCounterAssignment[]
+  handledQueues    QueueEntry[]             @relation("StaffHandledQueues")
+  eventsTriggered  QueueEvent[]
+}
+
+model Department {
+  id                      String   @id @default(uuid())
+  name                    String
+  code                    String   @unique // e.g. "REG", "FIN", "DOC", "CS"
+  description             String?
+  isActive                Boolean  @default(true)
+  estimatedServiceMinutes Int      @default(10)
+  maxDailyCapacity        Int      @default(200)
+  openingTime             String   @default("08:00") // "08:00"
+  closingTime             String   @default("18:00") // "18:00"
+  createdAt               DateTime @default(now())
+  updatedAt               DateTime @updatedAt
+
+  counters     ServiceCounter[]
+  queueEntries QueueEntry[]
+}
+
+model ServiceCounter {
+  id            String      @id @default(uuid())
+  counterNumber String      // e.g. "Counter 1", "Counter 2"
+  departmentId  String
+  department    Department  @relation(fields: [departmentId], references: [id], onDelete: Cascade)
+  isActive      Boolean     @default(true)
+  isPaused      Boolean     @default(false)
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  staffAssignments StaffCounterAssignment[]
+  servedQueues     QueueEntry[]
+}
+
+model StaffCounterAssignment {
+  id         String         @id @default(uuid())
+  userId     String
+  user       User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  counterId  String
+  counter    ServiceCounter @relation(fields: [counterId], references: [id], onDelete: Cascade)
+  isActive   Boolean        @default(true)
+  assignedAt DateTime       @default(now())
+
+  @@unique([userId, counterId])
+}
+
+model QueueEntry {
+  id             String        @id @default(uuid())
+  tokenNumber    String        @unique // e.g., "QG-REG-042"
+  secretToken    String        @unique // Secure unique tracking link
+  customerName   String
+  customerPhone  String?
+  customerEmail  String?
+  departmentId   String
+  department     Department    @relation(fields: [departmentId], references: [id], onDelete: Cascade)
+  status         String        @default("WAITING") // "WAITING", "CALLED", "SERVING", "SERVED", "SKIPPED", "CANCELLED"
+  priority       String        @default("STANDARD") // "STANDARD", "SENIOR_ACCESSIBLE", "URGENT", "VIP"
+  notes          String?
+
+  counterId      String?
+  counter        ServiceCounter? @relation(fields: [counterId], references: [id])
+  staffId        String?
+  staff          User?           @relation("StaffHandledQueues", fields: [staffId], references: [id])
+
+  joinedAt       DateTime      @default(now())
+  calledAt       DateTime?
+  serviceStartedAt DateTime?
+  completedAt    DateTime?
+  cancelledAt    DateTime?
+  
+  waitDurationSeconds    Int? // from joined to called/started
+  serviceDurationSeconds Int? // from serviceStarted to completed
+
+  events         QueueEvent[]
+  notifications  Notification[]
+
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  @@index([departmentId, status])
+  @@index([status, joinedAt])
+}
+
+model QueueEvent {
+  id            String      @id @default(uuid())
+  queueEntryId  String
+  queueEntry    QueueEntry  @relation(fields: [queueEntryId], references: [id], onDelete: Cascade)
+  fromStatus    String?
+  toStatus      String
+  note          String?
+  triggeredById String?
+  triggeredBy   User?       @relation(fields: [triggeredById], references: [id])
+  createdAt     DateTime    @default(now())
+
+  @@index([queueEntryId])
+}
+
+model Notification {
+  id           String      @id @default(uuid())
+  queueEntryId String
+  queueEntry   QueueEntry  @relation(fields: [queueEntryId], references: [id], onDelete: Cascade)
+  channel      String      @default("IN_APP") // IN_APP, EMAIL_MOCK, SMS_MOCK
+  title        String
+  message      String
+  isRead       Boolean     @default(false)
+  sentAt       DateTime    @default(now())
+}
